@@ -1,5 +1,6 @@
 package com.ilucky.idemo.controller;
 
+import com.ilucky.idemo.util.sql.MysqlUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +32,19 @@ public class ThreadController {
         return "new Thread(new Runnable(){Thead.sleep(" + time + ")})";
     }
 
-    // 锁
-    // 访问两次观察情况, 例如第一次访问: time=10000, 第二次访问: time=1
+    // 创建子线程，访问数据库
+    @RequestMapping("/create2/{time}")
+    public String create2(@PathVariable("time") final long time) {
+        business(time); // 主线程业务
+        new Thread(new Runnable() {
+            public void run() {
+                businessWithSQL(time);
+            }
+        }).run();  // 子线程业务
+        return "new Thread(new Runnable(){sql(select)})";
+    }
+
+    // 锁: 访问两次观察情况, 例如第一次访问: time=10000, 第二次访问: time=1(会被阻塞)
     private static final String SYNC = "sync";
     @RequestMapping("/syn/{time}")
     public String syn(@PathVariable("time") final long time) {
@@ -41,6 +53,15 @@ public class ThreadController {
         }
         return "synchronized(" + time +")";
     }
+
+    // 线程合并
+//    @RequestMapping("/join/{time}")
+//    public String syn(@PathVariable("time") final long time) {
+//        synchronized (SYNC) {
+//            business(time);
+//        }
+//        return "synchronized(" + time +")";
+//    }
 
     //    @RequestMapping("/waitNotify")
 //    public String sleep() {
@@ -62,6 +83,16 @@ public class ThreadController {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void businessWithSQL(long time) {
+        try {
+            MysqlUtil mysqlUtil = new MysqlUtil();
+            String select = mysqlUtil.select();
+            System.out.println(select);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

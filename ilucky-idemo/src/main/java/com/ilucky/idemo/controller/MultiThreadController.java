@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 多线程
+ */
 @RestController
 @RequestMapping("/multithread")
 public class MultiThreadController {
@@ -39,6 +42,10 @@ public class MultiThreadController {
         return "ThreadPool.execute(" + count * sleep + ")";
     }
 
+
+    // TODO: CycliBarrier
+
+    // TODO: Semaphore
 
     // 模拟业务
     private void business(long sleep) {
