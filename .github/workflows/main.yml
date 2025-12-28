@@ -1,0 +1,26 @@
+name: Warp Agent Code Review # 工作流名称
+on: # 触发条件：PR 创建/更新时运行
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  warp-code-review:
+    runs-on: ubuntu-latest # 使用 GitHub 托管的 Ubuntu 运行器
+    permissions: # 赋予操作 PR 的权限
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout code # 第一步：拉取代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 拉取完整提交历史，方便 git diff 分析
+
+      - name: Run Warp Agent for code review # 第二步：运行 Warp Agent
+        uses: warpdotdev/warp-agent-action@main
+        with:
+          prompt: |
+            Review the code changes on this branch:
+            1. Use the `git` command to identify changes from the base branch.
+            2. Analyze the diff for style, security, or correctness issues (focus on Go code and K8s configs).
+            3. If you have suggestions, use the `gh` command to comment on the PR.
+          warp_api_key: ${{ secrets.WARP_API_KEY }} # 安全引用密钥
