@@ -1,5 +1,6 @@
 name: Warp Agent Code Review # 工作流名称
 on: # 触发条件：PR 创建/更新时运行
+  push: 
   pull_request:
     types: [opened, synchronize]
 
