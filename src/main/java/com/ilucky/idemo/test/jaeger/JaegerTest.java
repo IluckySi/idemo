@@ -16,6 +16,12 @@ public class JaegerTest {
         config.withReporter(new Configuration.ReporterConfiguration().withSender(senderConfig).withFlushInterval(100).withLogSpans(false));
         config.withSampler(new Configuration.SamplerConfiguration().withType("const").withParam(1));
 
+        
+        
+        
+        
+        
+        
         io.opentracing.Tracer tracer = config.getTracer();
         System.out.println(tracer.toString());
         GlobalTracer.register(tracer);
